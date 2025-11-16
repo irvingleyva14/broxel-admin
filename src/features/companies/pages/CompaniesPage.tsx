@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { MOCK_COMPANIES } from "../../../mocks/companies";
 import CompaniesTable from "../components/CompaniesTable";
 import CompaniesToolbar from "../components/CompaniesToolbar";
 import { useCompanies } from "../hooks/useCompanies";
 import CompanyModal from "../components/CompanyModal";
 import NewCompanyForm from "../components/NewCompanyForm";
 import { Company } from "../types/company.types";
+import { useCompaniesStore } from "../hooks/useCompaniesStore";
 
 export default function CompaniesPage() {
-  const [companies, setCompanies] = useState<Company[]>(MOCK_COMPANIES);
+  const { companies, addCompany } = useCompaniesStore();
   const { search, setSearch, filtered } = useCompanies(companies);
 
   const [open, setOpen] = useState(false);
@@ -27,7 +27,7 @@ export default function CompaniesPage() {
       },
     };
 
-    setCompanies([newCompany, ...companies]);
+    addCompany(newCompany);
     setOpen(false);
   };
 

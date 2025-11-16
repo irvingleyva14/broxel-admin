@@ -1,19 +1,19 @@
 import { useParams, Link } from "react-router-dom";
 import { useState } from "react";
-import { MOCK_COMPANIES } from "../../../mocks/companies";
 import { Company } from "../types/company.types";
 
-// ← NUEVAS IMPORTACIONES
+// ← IMPORTACIONES CORRECTAS
 import CompanyModal from "../components/CompanyModal";
 import EditCompanyForm from "../components/EditCompanyForm";
+import { useCompaniesStore } from "../hooks/useCompaniesStore";
+
 
 export default function CompanyDetailPage() {
   const { id } = useParams();
-  const [open, setOpen] = useState(false); // ← agregado
+  const [open, setOpen] = useState(false);
 
-  const company: Company | undefined = MOCK_COMPANIES.find(
-    (c) => c.id === id
-  );
+  const { getById, updateCompany } = useCompaniesStore();
+  const company: Company | undefined = getById(id!);
 
   if (!company) {
     return (
@@ -104,7 +104,7 @@ export default function CompanyDetailPage() {
         </div>
       </div>
 
-      {/* ← AQUI AGREGAMOS EL MODAL */}
+      {/* Modal Editar */}
       <CompanyModal
         open={open}
         onClose={() => setOpen(false)}
@@ -113,7 +113,7 @@ export default function CompanyDetailPage() {
         <EditCompanyForm
           company={company}
           onSubmit={(updated) => {
-            console.log("Datos actualizados:", updated);
+            updateCompany(updated); // ← AQUI SE ACTUALIZA EN EL STORE
             setOpen(false);
           }}
         />
