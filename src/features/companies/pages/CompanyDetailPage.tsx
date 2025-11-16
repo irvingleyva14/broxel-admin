@@ -2,15 +2,14 @@ import { useParams, Link } from "react-router-dom";
 import { useState } from "react";
 import { Company } from "../types/company.types";
 
-// ← IMPORTACIONES CORRECTAS
 import CompanyModal from "../components/CompanyModal";
 import EditCompanyForm from "../components/EditCompanyForm";
 import { useCompaniesStore } from "../hooks/useCompaniesStore";
 
-
 export default function CompanyDetailPage() {
   const { id } = useParams();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // Modal editar
+  const [confirmOpen, setConfirmOpen] = useState(false); // Modal suspender/activar
 
   const { getById, updateCompany } = useCompaniesStore();
   const company: Company | undefined = getById(id!);
@@ -43,8 +42,21 @@ export default function CompanyDetailPage() {
         Editar Empresa
       </button>
 
+      {/* Botón Suspender/Activar */}
+      <button
+        onClick={() => setConfirmOpen(true)}
+        className={`px-4 py-2 rounded-lg text-white font-medium mt-4 ml-3 ${
+          company.status === "activa"
+            ? "bg-red-600 hover:bg-red-700"
+            : "bg-teal-600 hover:bg-teal-700"
+        }`}
+      >
+        {company.status === "activa" ? "Suspender Empresa" : "Activar Empresa"}
+      </button>
+
+      {/* CONTENIDO PRINCIPAL */}
       <div className="grid grid-cols-2 gap-6">
-        {/* Información básica */}
+        {/* Información General */}
         <div className="bg-slate-900 border border-slate-700 p-6 rounded-xl">
           <h3 className="text-xl font-semibold mb-4">Información General</h3>
 
@@ -56,9 +68,7 @@ export default function CompanyDetailPage() {
             <strong>Estatus:</strong>{" "}
             <span
               className={
-                company.status === "activa"
-                  ? "text-teal-400"
-                  : "text-red-400"
+                company.status === "activa" ? "text-teal-400" : "text-red-400"
               }
             >
               {company.status}
@@ -104,7 +114,9 @@ export default function CompanyDetailPage() {
         </div>
       </div>
 
-      {/* Modal Editar */}
+      {/* ---------- MODALES ---------- */}
+
+      {/* Modal Editar Empresa */}
       <CompanyModal
         open={open}
         onClose={() => setOpen(false)}
@@ -113,11 +125,49 @@ export default function CompanyDetailPage() {
         <EditCompanyForm
           company={company}
           onSubmit={(updated) => {
-            updateCompany(updated); // ← AQUI SE ACTUALIZA EN EL STORE
+            updateCompany(updated);
             setOpen(false);
           }}
         />
       </CompanyModal>
+
+      {/* Modal Confirmación Suspender/Activar */}
+      <CompanyModal
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        title={company.status === "activa" ? "Suspender empresa" : "Activar empresa"}
+      >
+        <p className="mb-6">
+          ¿Seguro que deseas{" "}
+          <strong>
+            {company.status === "activa" ? "suspender" : "activar"}
+          </strong>{" "}
+          esta empresa?
+        </p>
+
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => setConfirmOpen(false)}
+            className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-white"
+          >
+            Cancelar
+          </button>
+
+          <button
+            onClick={() => {
+              updateCompany({
+                ...company,
+                status: company.status === "activa" ? "suspendida" : "activa",
+              });
+              setConfirmOpen(false);
+            }}
+            className="px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded text-white"
+          >
+            Confirmar
+          </button>
+        </div>
+      </CompanyModal>
+
     </div>
   );
 }
