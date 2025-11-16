@@ -1,13 +1,34 @@
+import { useState } from "react";
 import { MOCK_COMPANIES } from "../../../mocks/companies";
 import CompaniesTable from "../components/CompaniesTable";
 import CompaniesToolbar from "../components/CompaniesToolbar";
 import { useCompanies } from "../hooks/useCompanies";
+import CompanyModal from "../components/CompanyModal";
+import NewCompanyForm from "../components/NewCompanyForm";
+import { Company } from "../types/company.types";
 
 export default function CompaniesPage() {
-  const { search, setSearch, filtered } = useCompanies(MOCK_COMPANIES);
+  const [companies, setCompanies] = useState<Company[]>(MOCK_COMPANIES);
+  const { search, setSearch, filtered } = useCompanies(companies);
 
-  const handleAdd = () => {
-    alert("Aquí luego abriremos un modal para registrar una empresa.");
+  const [open, setOpen] = useState(false);
+
+  const handleAdd = (data: any) => {
+    const newCompany: Company = {
+      ...data,
+      id: "NEW-" + (companies.length + 1),
+      createdAt: new Date().toISOString().split("T")[0],
+      tools: {
+        base: true,
+        pred: false,
+        fact: false,
+        banca: false,
+        inv: false,
+      },
+    };
+
+    setCompanies([newCompany, ...companies]);
+    setOpen(false);
   };
 
   return (
@@ -17,10 +38,18 @@ export default function CompaniesPage() {
       <CompaniesToolbar
         search={search}
         onSearchChange={setSearch}
-        onAddCompany={handleAdd}
+        onAddCompany={() => setOpen(true)}
       />
 
       <CompaniesTable companies={filtered} />
+
+      <CompanyModal
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Registrar nueva empresa"
+      >
+        <NewCompanyForm onSubmit={handleAdd} />
+      </CompanyModal>
     </div>
   );
 }
