@@ -1,0 +1,46 @@
+import { Company } from "../features/companies/types/company.types";
+
+export const MOCK_COMPANIES: Company[] = [
+  {
+    id: "BRX-001",
+    nombre: "Broxel Servicios Financieros, S.A.P.I.",
+    rfc: "BRO140101ABC",
+    giro: "Fintech / Pagos",
+    status: "activa",
+    createdAt: "2024-01-05",
+    facturasMes: 1243,
+    cuotaMensualFacturas: 2000,
+    phoneSlotsUsed: 7,
+    phoneSlotsQuota: 10,
+    mensajesMes: 18240,
+    planName: "Empresarial",
+    tools: {
+      base: true,
+      pred: true,
+      fact: true,
+      banca: true,
+      inv: false,
+    },
+  },
+  {
+    id: "SRV-773",
+    nombre: "Servicios Logísticos del Sureste, S. de R.L. de C.V.",
+    rfc: "SLS150202XYZ",
+    giro: "Logística",
+    status: "activa",
+    createdAt: "2024-04-12",
+    facturasMes: 287,
+    cuotaMensualFacturas: 500,
+    phoneSlotsUsed: 4,
+    phoneSlotsQuota: 5,
+    mensajesMes: 5530,
+    planName: "PyME",
+    tools: {
+      base: true,
+      pred: false,
+      fact: true,
+      banca: false,
+      inv: false,
+    },
+  },
+];
