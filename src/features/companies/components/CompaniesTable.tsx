@@ -23,7 +23,11 @@ export default function CompaniesTable({ companies }: Props) {
 
       <tbody>
         {companies.map((c) => (
-          <tr key={c.id} className="hover:bg-slate-800">
+          <tr
+            key={c.id}
+            className="hover:bg-slate-800 cursor-pointer"
+            onClick={() => (window.location.href = `/companies/${c.id}`)}
+          >
             <td className="border border-slate-800 p-3">{c.id}</td>
             <td className="border border-slate-800 p-3">{c.nombre}</td>
             <td className="border border-slate-800 p-3">{c.rfc}</td>
@@ -31,7 +35,9 @@ export default function CompaniesTable({ companies }: Props) {
             <td className="border border-slate-800 p-3">
               <span
                 className={
-                  c.status === "activa" ? "text-teal-400" : "text-red-400"
+                  c.status === "activa"
+                    ? "text-teal-400"
+                    : "text-red-400"
                 }
               >
                 {c.status}
