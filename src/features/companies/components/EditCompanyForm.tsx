@@ -6,14 +6,30 @@ type Props = {
   onSubmit: (data: Company) => void;
 };
 
+type FormErrors = {
+  nombre?: string;
+  rfc?: string;
+  giro?: string;
+  planName?: string;
+};
+
 export default function EditCompanyForm({ company, onSubmit }: Props) {
   const [form, setForm] = useState<Company>({ ...company });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (key: keyof Company, value: any) => {
     setForm({
       ...form,
       [key]: value,
     });
+
+    if (key in errors) {
+      setErrors({
+        ...errors,
+        [key]: undefined,
+      });
+    }
   };
 
   const handleToolChange = (key: keyof Company["tools"]) => {
@@ -26,9 +42,36 @@ export default function EditCompanyForm({ company, onSubmit }: Props) {
     });
   };
 
+  const validate = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!form.nombre.trim()) {
+      newErrors.nombre = "El nombre es obligatorio.";
+    }
+
+    if (!form.rfc.trim()) {
+      newErrors.rfc = "El RFC es obligatorio.";
+    }
+
+    if (!form.giro.trim()) {
+      newErrors.giro = "El giro es obligatorio.";
+    }
+
+    if (!form.planName.trim()) {
+      newErrors.planName = "El plan es obligatorio.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validate()) return;
+
+    setIsSubmitting(true);
     onSubmit(form);
+    setIsSubmitting(false);
   };
 
   return (
@@ -41,16 +84,22 @@ export default function EditCompanyForm({ company, onSubmit }: Props) {
           value={form.nombre}
           onChange={(e) => handleChange("nombre", e.target.value)}
         />
+        {errors.nombre && (
+          <p className="text-sm text-red-400 mt-1">{errors.nombre}</p>
+        )}
       </div>
 
       {/* RFC */}
       <div>
         <label className="block mb-1">RFC</label>
         <input
-          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded"
+          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded uppercase"
           value={form.rfc}
-          onChange={(e) => handleChange("rfc", e.target.value)}
+          onChange={(e) => handleChange("rfc", e.target.value.toUpperCase())}
         />
+        {errors.rfc && (
+          <p className="text-sm text-red-400 mt-1">{errors.rfc}</p>
+        )}
       </div>
 
       {/* Giro */}
@@ -61,6 +110,9 @@ export default function EditCompanyForm({ company, onSubmit }: Props) {
           value={form.giro}
           onChange={(e) => handleChange("giro", e.target.value)}
         />
+        {errors.giro && (
+          <p className="text-sm text-red-400 mt-1">{errors.giro}</p>
+        )}
       </div>
 
       {/* Plan */}
@@ -71,6 +123,9 @@ export default function EditCompanyForm({ company, onSubmit }: Props) {
           value={form.planName}
           onChange={(e) => handleChange("planName", e.target.value)}
         />
+        {errors.planName && (
+          <p className="text-sm text-red-400 mt-1">{errors.planName}</p>
+        )}
       </div>
 
       {/* Estado */}
@@ -110,9 +165,10 @@ export default function EditCompanyForm({ company, onSubmit }: Props) {
       {/* Submit */}
       <button
         type="submit"
-        className="mt-2 w-full bg-teal-600 hover:bg-teal-700 px-4 py-2 rounded text-white font-medium"
+        disabled={isSubmitting}
+        className="mt-2 w-full bg-teal-600 hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded text-white font-medium"
       >
-        Guardar Cambios
+        {isSubmitting ? "Guardando..." : "Guardar Cambios"}
       </button>
     </form>
   );

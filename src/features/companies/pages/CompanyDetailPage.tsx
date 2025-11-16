@@ -4,16 +4,22 @@ import { Company } from "../types/company.types";
 
 import CompanyModal from "../components/CompanyModal";
 import EditCompanyForm from "../components/EditCompanyForm";
-import { useCompaniesStore } from "../hooks/useCompaniesStore";
+//import { useCompaniesStore } from "../hooks/useCompaniesStore";
+import { useCompaniesStore } from "../context/CompaniesContext";
 
 export default function CompanyDetailPage() {
   const { id } = useParams();
-  const [open, setOpen] = useState(false); // Modal editar
-  const [confirmOpen, setConfirmOpen] = useState(false); // Modal suspender/activar
 
+  // Estados del componente
+  const [open, setOpen] = useState(false);            // Modal editar
+  const [confirmOpen, setConfirmOpen] = useState(false); // Modal suspender/activar
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  // Store global
   const { getById, updateCompany } = useCompaniesStore();
   const company: Company | undefined = getById(id!);
 
+  // Si no existe la empresa
   if (!company) {
     return (
       <div>
@@ -27,6 +33,15 @@ export default function CompanyDetailPage() {
 
   return (
     <div className="space-y-6">
+
+      {/* Mensaje de éxito */}
+      {successMsg && (
+        <div className="mb-4 rounded-lg border border-teal-500 bg-teal-900/40 px-4 py-2 text-sm text-teal-200">
+          {successMsg}
+        </div>
+      )}
+
+      {/* Regresar */}
       <Link to="/companies" className="text-teal-400 underline">
         ← Volver a empresas
       </Link>
@@ -56,6 +71,7 @@ export default function CompanyDetailPage() {
 
       {/* CONTENIDO PRINCIPAL */}
       <div className="grid grid-cols-2 gap-6">
+        
         {/* Información General */}
         <div className="bg-slate-900 border border-slate-700 p-6 rounded-xl">
           <h3 className="text-xl font-semibold mb-4">Información General</h3>
@@ -114,9 +130,9 @@ export default function CompanyDetailPage() {
         </div>
       </div>
 
-      {/* ---------- MODALES ---------- */}
+      {/* ---------------- MODALES ---------------- */}
 
-      {/* Modal Editar Empresa */}
+      {/* Modal Editar */}
       <CompanyModal
         open={open}
         onClose={() => setOpen(false)}
@@ -126,16 +142,22 @@ export default function CompanyDetailPage() {
           company={company}
           onSubmit={(updated) => {
             updateCompany(updated);
+            setSuccessMsg("Empresa actualizada correctamente.");
+            setTimeout(() => setSuccessMsg(null), 3000);
             setOpen(false);
           }}
         />
       </CompanyModal>
 
-      {/* Modal Confirmación Suspender/Activar */}
+      {/* Modal Suspender / Activar */}
       <CompanyModal
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
-        title={company.status === "activa" ? "Suspender empresa" : "Activar empresa"}
+        title={
+          company.status === "activa"
+            ? "Suspender empresa"
+            : "Activar empresa"
+        }
       >
         <p className="mb-6">
           ¿Seguro que deseas{" "}
@@ -157,8 +179,19 @@ export default function CompanyDetailPage() {
             onClick={() => {
               updateCompany({
                 ...company,
-                status: company.status === "activa" ? "suspendida" : "activa",
+                status:
+                  company.status === "activa"
+                    ? "suspendida"
+                    : "activa",
               });
+
+              setSuccessMsg(
+                company.status === "activa"
+                  ? "Empresa suspendida."
+                  : "Empresa activada."
+              );
+
+              setTimeout(() => setSuccessMsg(null), 3000);
               setConfirmOpen(false);
             }}
             className="px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded text-white"
