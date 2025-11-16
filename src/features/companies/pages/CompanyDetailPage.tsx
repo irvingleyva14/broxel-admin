@@ -1,9 +1,15 @@
 import { useParams, Link } from "react-router-dom";
+import { useState } from "react";
 import { MOCK_COMPANIES } from "../../../mocks/companies";
 import { Company } from "../types/company.types";
 
+// ← NUEVAS IMPORTACIONES
+import CompanyModal from "../components/CompanyModal";
+import EditCompanyForm from "../components/EditCompanyForm";
+
 export default function CompanyDetailPage() {
   const { id } = useParams();
+  const [open, setOpen] = useState(false); // ← agregado
 
   const company: Company | undefined = MOCK_COMPANIES.find(
     (c) => c.id === id
@@ -26,7 +32,16 @@ export default function CompanyDetailPage() {
         ← Volver a empresas
       </Link>
 
+      {/* Título */}
       <h2 className="text-4xl font-bold">{company.nombre}</h2>
+
+      {/* Botón Editar */}
+      <button
+        onClick={() => setOpen(true)}
+        className="px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg text-white font-medium mt-4"
+      >
+        Editar Empresa
+      </button>
 
       <div className="grid grid-cols-2 gap-6">
         {/* Información básica */}
@@ -88,6 +103,21 @@ export default function CompanyDetailPage() {
           </ul>
         </div>
       </div>
+
+      {/* ← AQUI AGREGAMOS EL MODAL */}
+      <CompanyModal
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Editar empresa"
+      >
+        <EditCompanyForm
+          company={company}
+          onSubmit={(updated) => {
+            console.log("Datos actualizados:", updated);
+            setOpen(false);
+          }}
+        />
+      </CompanyModal>
     </div>
   );
 }
