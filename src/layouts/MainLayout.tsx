@@ -5,7 +5,7 @@ export default function MainLayout() {
     <div className="min-h-screen flex bg-slate-950 text-slate-100">
 
       {/* Sidebar */}
-      <aside className="w-64 border-r border-slate-800 p-6">
+      <aside className="w-64 border-r border-slate-800 p-6 bg-slate-900">
         <h1 className="text-xl font-bold mb-8">Broxel Admin</h1>
 
         <nav className="space-y-4">
@@ -16,7 +16,7 @@ export default function MainLayout() {
       </aside>
 
       {/* Content */}
-      <main className="flex-1 p-10">
+      <main className="flex-1 p-10 bg-slate-950">
         <Outlet />
       </main>
     </div>
