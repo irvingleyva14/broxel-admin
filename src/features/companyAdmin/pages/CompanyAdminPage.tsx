@@ -1,8 +1,15 @@
+// src/features/companyAdmin/pages/CompanyAdminPage.tsx
+
 import { useParams, Link } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
 import { useCompaniesStore } from "../../companies/hooks/useCompaniesStore";
+
+// Componentes del módulo Company Admin
 import CompanyHeader from "../components/CompanyHeader";
 import CompanyOverview from "../components/CompanyOverview";
+import FinanceTabs from "../components/FinanceTabs";
+import UsersList from "../components/UsersList";
 import AuditLog from "../components/AuditLog";
 
 export default function CompanyAdminPage() {
@@ -28,48 +35,50 @@ export default function CompanyAdminPage() {
       {/* Encabezado */}
       <CompanyHeader company={company} />
 
-      {/* Overview de métricas */}
+      {/* Overview con KPIs */}
       <CompanyOverview company={company} />
 
       {/* Tabs principales */}
       <div className="mt-4">
         <Tabs defaultValue="finanzas" className="w-full">
+
           <TabsList className="rounded-2xl bg-slate-900 border border-slate-700">
             <TabsTrigger
               value="finanzas"
-              className="rounded-2xl data-[state=active]:bg-slate-800 data-[state=active]:text-teal-300"
+              className="rounded-2xl data-[state=active]:bg-slate-800 
+                         data-[state=active]:text-teal-300"
             >
               Finanzas
             </TabsTrigger>
 
             <TabsTrigger
               value="usuarios"
-              className="rounded-2xl data-[state=active]:bg-slate-800 data-[state=active]:text-teal-300"
+              className="rounded-2xl data-[state=active]:bg-slate-800 
+                         data-[state=active]:text-teal-300"
             >
               Usuarios
             </TabsTrigger>
 
             <TabsTrigger
               value="bitacora"
-              className="rounded-2xl data-[state=active]:bg-slate-800 data-[state=active]:text-teal-300"
+              className="rounded-2xl data-[state=active]:bg-slate-800 
+                         data-[state=active]:text-teal-300"
             >
               Bitácora
             </TabsTrigger>
           </TabsList>
 
-          {/* Contenido de cada tab (por ahora, placeholders) */}
+          {/* FINANZAS */}
           <TabsContent value="finanzas" className="mt-4">
-            <div className="bg-slate-900 border border-slate-700 rounded-xl p-4 text-slate-200">
-              Aquí irá el módulo de Finanzas (asistente, tools, facturas, etc.).
-            </div>
+            <FinanceTabs company={company} />
           </TabsContent>
 
+          {/* USUARIOS */}
           <TabsContent value="usuarios" className="mt-4">
-            <div className="bg-slate-900 border border-slate-700 rounded-xl p-4 text-slate-200">
-              Aquí irá el módulo de Usuarios / Números (UsersList).
-            </div>
+            <UsersList companyId={company.id} />
           </TabsContent>
 
+          {/* BITÁCORA */}
           <TabsContent value="bitacora" className="mt-4">
             <AuditLog companyId={company.id} />
           </TabsContent>
