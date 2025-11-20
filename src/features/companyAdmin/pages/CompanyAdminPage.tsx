@@ -3,6 +3,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useCompaniesStore } from "../../companies/hooks/useCompaniesStore";
 import CompanyHeader from "../components/CompanyHeader";
 import CompanyOverview from "../components/CompanyOverview";
+import AuditLog from "../components/AuditLog";
 
 export default function CompanyAdminPage() {
   const { id } = useParams();
@@ -70,10 +71,9 @@ export default function CompanyAdminPage() {
           </TabsContent>
 
           <TabsContent value="bitacora" className="mt-4">
-            <div className="bg-slate-900 border border-slate-700 rounded-xl p-4 text-slate-200">
-              Aquí irá el módulo de Bitácora (AuditLog).
-            </div>
+            <AuditLog companyId={company.id} />
           </TabsContent>
+
         </Tabs>
       </div>
     </div>
