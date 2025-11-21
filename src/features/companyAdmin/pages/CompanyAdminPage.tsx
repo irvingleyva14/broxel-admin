@@ -32,6 +32,16 @@ export default function CompanyAdminPage() {
   return (
     <div className="space-y-8">
 
+            {/* TÍTULO PRINCIPAL */}
+      <div className="space-y-2 mb-6">
+        <h1 className="text-3xl font-bold text-slate-100">
+          Administrar empresa
+        </h1>
+        <p className="text-slate-400">
+          Configuración, consumo, usuarios y bitácora operativa.
+        </p>
+      </div>
+
       {/* Encabezado */}
       <CompanyHeader company={company} />
 

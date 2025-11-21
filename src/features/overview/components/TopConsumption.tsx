@@ -1,8 +1,31 @@
-import Kpi from "./Kpi";
-import { Phone, ShieldCheck, FileText, Activity } from "lucide-react";
-import { MOCK_COMPANIES } from "../../../mocks/companies";
+import { Card, CardContent } from "@/components/ui/card";
+import { Phone, FileText, Activity, ShieldCheck } from "lucide-react";
+import { MOCK_COMPANIES } from "@/mocks/companies";
 
-const num = new Intl.NumberFormat("es-MX");
+function KpiItem({
+  label,
+  value,
+  icon: Icon,
+}: {
+  label: string;
+  value: string | number;
+  icon: any;
+}) {
+  return (
+    <Card className="rounded-2xl bg-slate-900 border border-slate-700">
+      <CardContent className="p-4 flex items-center gap-3">
+        <div className="p-2 rounded-xl bg-slate-800 text-slate-300">
+          <Icon className="h-5 w-5" />
+        </div>
+
+        <div>
+          <div className="text-xs text-slate-400">{label}</div>
+          <div className="text-lg font-semibold text-slate-100">{value}</div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function TopConsumption() {
   const empresas = MOCK_COMPANIES;
@@ -25,16 +48,16 @@ export default function TopConsumption() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <Kpi label="# Números activos" value={String(activos)} icon={Phone} />
-      <Kpi label="Utilización WA" value={`${waUtil}%`} icon={ShieldCheck} />
-      <Kpi
+      <KpiItem label="# Números activos" value={activos} icon={Phone} />
+      <KpiItem label="Utilización WA" value={`${waUtil}%`} icon={ShieldCheck} />
+      <KpiItem
         label="Facturas (mes)"
-        value={`${num.format(facturasUsadas)} · ${factUtil}%`}
+        value={`${facturasUsadas} · ${factUtil}%`}
         icon={FileText}
       />
-      <Kpi
-        label="Mensajes/mes (avg/num)"
-        value={`${num.format(mensajes)} · ${avgMsgPorNumero}`}
+      <KpiItem
+        label="Mensajes promedio"
+        value={avgMsgPorNumero}
         icon={Activity}
       />
     </div>

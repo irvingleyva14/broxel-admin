@@ -34,6 +34,13 @@ export default function CompanyDetailPage() {
   return (
     <div className="space-y-6">
 
+
+            {/* TÍTULO */}
+      <div className="space-y-2 mb-6">
+        <h1 className="text-3xl font-bold text-slate-100">{company.nombre}</h1>
+        <p className="text-slate-400">Información general y métricas de la empresa.</p>
+      </div>
+
       {/* Mensaje de éxito */}
       {successMsg && (
         <div className="mb-4 rounded-lg border border-teal-500 bg-teal-900/40 px-4 py-2 text-sm text-teal-200">

@@ -37,7 +37,7 @@ export default function CompaniesPage() {
   };
 
   return (
-    <div>
+    <div className="space-y-6">
       
       {successMsg && (
         <div className="mb-4 rounded-lg border border-teal-500 bg-teal-900/40 px-4 py-2 text-sm text-teal-200">
@@ -45,7 +45,11 @@ export default function CompaniesPage() {
         </div>
       )}
 
-      <h2 className="text-3xl font-bold mb-6">Empresas</h2>
+            {/* TÍTULO */}
+      <div className="space-y-2 mb-6">
+        <h1 className="text-3xl font-bold text-slate-100">Empresas</h1>
+        <p className="text-slate-400">Administración de empresas registradas en el sistema.</p>
+      </div>
 
       <CompaniesToolbar
         search={search}

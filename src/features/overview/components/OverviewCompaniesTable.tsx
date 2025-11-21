@@ -1,146 +1,128 @@
-import { useMemo, useState } from "react";
-import { MOCK_COMPANIES } from "../../../mocks/companies";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Settings } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Settings, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { MOCK_COMPANIES } from "@/mocks/companies";
 
 function pct(a: number, b: number) {
   return Math.round((a / Math.max(1, b)) * 100);
 }
 
 export default function OverviewCompaniesTable() {
-  const [q, setQ] = useState("");
-
-  const filtered = useMemo(() => {
-    const term = q.toLowerCase();
-    return MOCK_COMPANIES.filter(
-      (c) =>
-        c.nombre.toLowerCase().includes(term) ||
-        c.rfc.toLowerCase().includes(term) ||
-        c.id.toLowerCase().includes(term)
-    );
-  }, [q]);
+  const empresas = MOCK_COMPANIES;
 
   return (
-    <Card className="rounded-2xl shadow-sm bg-slate-900 border border-slate-700 text-slate-200">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-xl flex items-center gap-2">
-          <span>Empresas</span>
+    <Card className="rounded-2xl bg-slate-900 border border-slate-700">
+      <CardHeader>
+        <CardTitle className="text-slate-100 flex items-center justify-between">
+          Empresas registradas
         </CardTitle>
-
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="h-4 w-4 absolute left-2 top-2.5 opacity-60" />
-            <Input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Buscar nombre, RFC o ID"
-              className="pl-8 rounded-xl w-64 bg-slate-800 border-slate-700 text-slate-200"
-            />
-          </div>
-        </div>
       </CardHeader>
 
-      <CardContent className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="text-muted-foreground">
-            <tr className="text-left border-b border-slate-700">
-              <th className="py-2">Empresa</th>
-              <th>Estatus</th>
-              <th>Consumo</th>
-              <th className="text-right pr-3">Acciones</th>
-            </tr>
-          </thead>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-800 text-slate-400 text-left">
+                <th className="py-2">Empresa</th>
+                <th className="py-2">Consumo</th>
+                <th className="py-2">Plan</th>
+                <th className="py-2 text-right">Acciones</th>
+              </tr>
+            </thead>
 
-          <tbody>
-            {filtered.map((c) => {
-              const chips = (
-                <div className="flex flex-wrap gap-2">
-                  {/* Badges oscuros */}
-                  <Badge
-                    className="
-                      rounded-full px-2 py-1
-                      bg-slate-800 border border-slate-600
-                      text-slate-300
-                    "
-                  >
-                    Fac {pct(c.facturasMes, c.cuotaMensualFacturas)}%
-                  </Badge>
-
-                  <Badge
-                    className="
-                      rounded-full px-2 py-1
-                      bg-slate-800 border border-slate-600
-                      text-slate-300
-                    "
-                  >
-                    WA {pct(c.phoneSlotsUsed, c.phoneSlotsQuota)}%
-                  </Badge>
-
-                  <Badge
-                    className="
-                      rounded-full px-2 py-1
-                      bg-slate-800 border border-slate-600
-                      text-slate-300
-                    "
-                  >
-                    Msg{" "}
-                    {c.phoneSlotsUsed
-                      ? Math.round(c.mensajesMes / c.phoneSlotsUsed)
-                      : 0}
-                  </Badge>
-                </div>
-              );
-
-              return (
+            <tbody>
+              {empresas.map((c) => (
                 <tr
                   key={c.id}
-                  className="border-b border-slate-800 hover:bg-slate-800/40 transition"
+                  className="border-b border-slate-800 hover:bg-slate-800/40"
                 >
-                  <td className="py-3 max-w-[360px]">
-                    <div className="font-medium truncate">{c.nombre}</div>
-                    <div className="text-xs text-muted-foreground truncate">
+                  {/* Empresa */}
+                  <td className="py-3">
+                    <div className="font-medium text-slate-100 truncate max-w-[320px]">
+                      {c.nombre}
+                    </div>
+
+                    <div className="text-xs text-slate-400 truncate">
                       RFC {c.rfc} · {c.giro}
                     </div>
                   </td>
 
-                  <td>
+                  {/* Chips de consumo */}
+                  <td className="py-3">
+                    <div className="flex flex-wrap gap-2">
+                      <Badge
+                        variant="secondary"
+                        className="rounded-full bg-slate-800 text-slate-300 border-slate-700"
+                      >
+                        Fac {pct(c.facturasMes, c.cuotaMensualFacturas)}%
+                      </Badge>
+
+                      <Badge
+                        variant="secondary"
+                        className="rounded-full bg-slate-800 text-slate-300 border-slate-700"
+                      >
+                        WA {pct(c.phoneSlotsUsed, c.phoneSlotsQuota)}%
+                      </Badge>
+
+                      <Badge
+                        variant="secondary"
+                        className="rounded-full bg-slate-800 text-slate-300 border-slate-700"
+                      >
+                        Msg {c.phoneSlotsUsed ? Math.round(c.mensajesMes / c.phoneSlotsUsed) : 0}
+                        /num
+                      </Badge>
+                    </div>
+                  </td>
+
+                  {/* Plan */}
+                  <td className="py-3">
                     <Badge
-                      variant={
-                        c.status === "activa" ? "default" : "destructive"
-                      }
-                      className="rounded-full"
+                      variant="outline"
+                      className="rounded-full border-slate-600 text-slate-300"
                     >
-                      {c.status}
+                      {c.planName}
                     </Badge>
                   </td>
 
-                  <td>{chips}</td>
+                  {/* Acciones */}
+                  <td className="py-3 text-right">
+                    <Link to={`/companies/${c.id}/admin`}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-2xl border-slate-600 text-slate-200 hover:bg-slate-800"
+                      >
+                        Admin
+                        <Settings className="h-4 w-4 ml-2" />
+                      </Button>
+                    </Link>
 
-                  <td className="text-right pr-3">
-                    <Button
-                      variant="outline"
-                      className="
-                        rounded-xl text-xs
-                        border-slate-600
-                        bg-slate-900
-                        text-slate-300
-                        hover:bg-slate-800
-                        hover:text-teal-300
-                      "
-                      onClick={() => console.log('TODO: Ir a admin', c.id)}
-                    >
-                      <Settings className="h-3 w-3 mr-2 text-slate-400" />
-                      Administrar
-                    </Button>
+                    <Link to={`/companies/${c.id}`}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="rounded-2xl text-slate-300 hover:text-teal-300 hover:bg-slate-800 ml-2"
+                      >
+                        Ver
+                        <ChevronRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </Link>
                   </td>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              ))}
+
+              {empresas.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="py-6 text-center text-slate-500">
+                    No hay empresas registradas.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </CardContent>
     </Card>
   );
