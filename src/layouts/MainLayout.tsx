@@ -23,7 +23,7 @@ export default function MainLayout() {
             group
             bg-slate-900
             border-r border-slate-800
-            transition-all duration-300 ease-[cubic-bezier(0.25,0.8,0.25,1)]
+            transition-all duration-300 ease-\[cubic-bezier(0.25,0.8,0.25,1)\]
             w-20 hover:w-64
             flex flex-col
             z-20
