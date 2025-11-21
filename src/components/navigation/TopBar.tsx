@@ -9,6 +9,12 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 
+import { useNavigate } from "react-router-dom";
+import { useCompaniesStore } from "@/features/companies/hooks/useCompaniesStore";
+import { fuzzyMatch } from "@/lib/fuzzy";
+import { highlight } from "@/lib/highlight";
+import { matchAction } from "@/lib/actionSearch";
+
 import { Bell, Search, MoreHorizontal } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -18,12 +24,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { Building2, Sparkles, ArrowRight } from "lucide-react";
+import { matchCompany } from "@/lib/companySearch";
+
 export default function TopBar() {
-  const [searchOpen, setSearchOpen] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
+    const navigate = useNavigate();
+    const { companies } = useCompaniesStore();
+    const [query, setQuery] = useState("");
+    const filteredCompanies = companies.filter((c) => matchCompany(c, query));
+
+    const actionList = [
+  { label: "Crear empresa", action: () => navigate("/companies") },
+  { label: "Invitar usuario", action: () => navigate("/companies") },
+  { label: "Ver logs", action: () => navigate("/companies") },
+    ];
+
+    const filteredActions = actionList.filter((a) =>
+    matchAction(a.label, query)
+    );
 
 
     // ⭐ Keyboard shortcut: Ctrl + K (Windows/Linux) / Cmd + K (Mac)
-  useEffect(() => {
+    useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
@@ -108,17 +131,101 @@ export default function TopBar() {
       {/* SPOTLIGHT SEARCH */}
       <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
         <Command className="bg-slate-900 text-slate-100 border border-slate-700">
-          <CommandInput placeholder="Busca empresas, usuarios o acciones…" />
+          <CommandInput placeholder="Busca empresas, usuarios o acciones…" 
+            value={query}
+            onValueChange={setQuery}       
+          />
           <CommandList>
             <CommandGroup heading="Acciones">
-              <CommandItem>Crear empresa</CommandItem>
-              <CommandItem>Invitar usuario</CommandItem>
-              <CommandItem>Ver logs</CommandItem>
+            {filteredActions.map((a, i) => (
+                <CommandItem
+                key={i}
+                onSelect={() => {
+                    a.action();
+                    setSearchOpen(false);
+                }}
+                >
+                <Sparkles className="w-4 h-4 text-purple-300 mr-2" />
+
+                <span
+                    dangerouslySetInnerHTML={{
+                    __html: highlight(a.label, query),
+                    }}
+                />
+                </CommandItem>
+            ))}
             </CommandGroup>
+
+
+            {/* NAVEGACION */}
             <CommandGroup heading="Navegación">
-              <CommandItem>Home</CommandItem>
-              <CommandItem>Empresas</CommandItem>
-              <CommandItem>Overview</CommandItem>
+            <CommandItem onSelect={() => navigate("/")}>
+                <ArrowRight className="w-4 h-4 text-sky-300 mr-2" />
+                Home
+            </CommandItem>
+
+            <CommandItem onSelect={() => navigate("/overview")}>
+                <ArrowRight className="w-4 h-4 text-sky-300 mr-2" />
+                Overview
+            </CommandItem>
+
+            <CommandItem onSelect={() => navigate("/companies")}>
+                <ArrowRight className="w-4 h-4 text-sky-300 mr-2" />
+                Empresas
+            </CommandItem>
+            </CommandGroup>
+
+            {/* EMPRESAS */}
+            <CommandGroup heading="Empresas">
+            {filteredCompanies.length === 0 && (
+                <CommandItem disabled>No hay coincidencias</CommandItem>
+            )}
+
+            {filteredCompanies.map((company) => (
+                <CommandItem
+                key={company.id}
+                onSelect={() => {
+                    navigate(`/companies/${company.id}/admin`);
+                    setSearchOpen(false);
+                }}
+                >
+                <Building2 className="w-4 h-4 text-teal-300 mr-2" />
+
+                {/* Nombre resaltado */}
+                <span
+                    dangerouslySetInnerHTML={{
+                    __html: highlight(company.nombre, query),
+                    }}
+                />
+
+                {/* RFC a la derecha */}
+                <span
+                    className="ml-auto text-xs text-slate-500"
+                    dangerouslySetInnerHTML={{
+                    __html: highlight(company.rfc, query),
+                    }}
+                />
+                </CommandItem>
+            ))}
+            </CommandGroup>
+
+            {/* ACCIONES RAPIDAS */}
+            <CommandGroup heading="Acciones rápidas">
+            <CommandItem onSelect={() => {
+                navigate("/companies");
+                setSearchOpen(false);
+            }}>
+                <Sparkles className="w-4 h-4 text-purple-300 mr-2" />
+                Crear empresa
+            </CommandItem>
+
+            <CommandItem onSelect={() => {
+                navigate("/overview");
+                setSearchOpen(false);
+            }}>
+                <Sparkles className="w-4 h-4 text-purple-300 mr-2" />
+                Métricas globales
+            </CommandItem>
             </CommandGroup>
           </CommandList>
         </Command>
